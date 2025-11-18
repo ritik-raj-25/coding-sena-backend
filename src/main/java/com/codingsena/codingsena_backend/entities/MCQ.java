@@ -59,7 +59,8 @@ public class MCQ {
 	@Column(nullable = false, name = "option_c", columnDefinition = "TEXT")
 	private String optionC;
 	
-	@Column(nullable = false, name = "option_d", columnDefinition = "LONGTEXT")
+	@Lob
+	@Column(nullable = false, name = "option_d", columnDefinition = "TEXT")
 	private String optionD;
 	
 	@Column(name = "correct_option", nullable = false)
