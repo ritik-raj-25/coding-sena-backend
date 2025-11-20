@@ -23,4 +23,5 @@ public class BatchResponseDto {
 	private LocalDateTime lastUpdatedAt;
 	private Long discount;
 	private Integer noOfStudentsEnrolled;
+	private Boolean isActive;
 }

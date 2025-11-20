@@ -87,7 +87,14 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		
 		String[] message = new String[1];
 		Enrollment enrollment = createEnrollmentHelper(user, batch, message, EnrollmentStatus.ACTIVE);
-		enrollment.setIsTrainerEnrollmentByAdmin(true);
+		
+		if(!enrollment.getIsTrainerEnrollmentByAdmin()) {
+			enrollment.setIsTrainerEnrollmentByAdmin(true);
+			message[0] = "Trainer assigned to the batch successfully.";
+		}
+		else {
+			message[0] = assignBatchRequest.getUserEmail() + " is already a trainer for this batch.";
+		}
 		
 		EnrollmentResponseDto enrollmentResponseDto = enrollmentResponseHelper(batch, user, enrollment, EnrollmentType.TRAINER);
 		
