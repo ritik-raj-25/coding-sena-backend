@@ -5,116 +5,180 @@ import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.codingsena.codingsena_backend.services.EmailService;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailServiceImpl implements EmailService{
 	
-	@Value("${spring.mail.username}")
+	@Value("${spring.mail.from}")
 	private String fromEmail;
 	
-	private JavaMailSender mailSender;
+	@Value("${resend.api.key}")
+	private String resendApiKey;
 	
-	public EmailServiceImpl(JavaMailSender mailSender) {
-		super();
-		this.mailSender = mailSender;
-	}
-
 	@Override
-	@Async
 	public void sendEmailVerificationEmail(String to, String name, String link) throws MessagingException, IOException {
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-		helper.setTo(to);
-		helper.setFrom(fromEmail);
-		helper.setSubject("Verify Your Email - Coding Sena");
+		Resend resend = new Resend(resendApiKey);
 		
 		ClassPathResource resource = new ClassPathResource("verification-email.html");
         String template = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 		template = template.replace("{{name}}", name);
 		template = template.replace("{{link}}", link);
 		
-		helper.setText(template, true);
-		mailSender.send(message);
+		CreateEmailOptions params = CreateEmailOptions.builder()
+                .from(fromEmail)
+                .to(to)
+                .subject("Verify Your Email - Coding Sena")
+                .html(template)
+                .build();
+		
+		try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
-	@Async
 	public void sendConfirmEmailVerificationEmail(String to, String name) {
-		var message = new SimpleMailMessage();
-		message.setTo(to);
-		message.setSubject("Welcome to Coding Sena!");
-		message.setText("Hello " + name + ",\n\nWelcome to Coding Sena! Your account has been successfully verified.\n\nEnjoy the experience!\n\n- Team Coding Sena");
-		mailSender.send(message);
+		Resend resend = new Resend(resendApiKey);
+		
+		CreateEmailOptions params = CreateEmailOptions.builder()
+				.from(fromEmail)
+				.to(to)
+				.subject("Welcome to Coding Sena!")
+				.text("Hello " + name + ",\n\nWelcome to Coding Sena! Your account has been successfully verified.\n\nEnjoy the experience!\n\n- Team Coding Sena")
+				.build();
+		
+		try {
+			CreateEmailResponse data = resend.emails().send(params);
+			System.out.println(data.getId());
+		} catch (ResendException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	@Async
 	public void sendPromoteUserEmail(String to, String name) {
-	    var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Promoted to Trainer!");
-	    message.setText("Hello " + name + ",\n\nWelcome to Coding Sena! Awesome news — you’ve just been promoted to Trainer! We’re thrilled to have you on board in this new role. Let’s make it count!\n\nEnjoy the experience!\n\n- Team Coding Sena");
-	    mailSender.send(message);
+	    Resend resend = new Resend(resendApiKey);
+	    
+	    CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Promoted to Trainer!")
+	    		.text("Hello " + name + ",\n\nWelcome to Coding Sena! Awesome news — you’ve just been promoted to Trainer! We’re thrilled to have you on board in this new role. Let’s make it count!\n\nEnjoy the experience!\n\n- Team Coding Sena")
+	    		.build();
+	    
+	    try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
-	@Async
 	public void sendDemoteUserEmail(String to, String name) {
-	    var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Demoted to Learner!");
-	    message.setText("Hello " + name + ",\n\nThis is to inform you that your account has been demoted to Student.\n\nIf you have any questions, feel free to reach out.\n\n- Team Coding Sena");
-	    mailSender.send(message);
+	    Resend resend = new Resend(resendApiKey);
+	    
+	    CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Demoted to Learner!")
+	    		.text("Hello " + name + ",\n\nThis is to inform you that your account has been demoted to Student.\n\nIf you have any questions, feel free to reach out.\n\n- Team Coding Sena")
+	    		.build();
+	    
+	    try {
+			CreateEmailResponse data = resend.emails().send(params);
+			System.out.println(data.getId());
+		} catch (ResendException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	@Async
 	public void sendBlockUserEmail(String to, String name) {
-	    var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Account Blocked");
-	    message.setText("Hello " + name + ",\n\nWe regret to inform you that your account has been blocked due to policy violations or suspicious activity.\n\nIf you believe this is a mistake, please contact support.\n\n- Team Coding Sena");
-	    mailSender.send(message);
+	    Resend resend = new Resend(resendApiKey);
+	    
+	    CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Account Blocked")
+	    		.text("Hello " + name + ",\n\nWe regret to inform you that your account has been blocked due to policy violations or suspicious activity.\n\nIf you believe this is a mistake, please contact support.\n\n- Team Coding Sena")
+	    		.build();
+	    
+	    try {
+	    	CreateEmailResponse data = resend.emails().send(params);
+	    	System.out.println(data.getId());
+	    } catch (ResendException e) {
+	    	e.printStackTrace();
+	    }
 	}
 
 	@Override
-	@Async
 	public void sendUnblockUserEmail(String to, String name) {
-	    var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Account Unblocked");
-	    message.setText("Hello " + name + ",\n\nYour account has been de-activated successfully.\n\nWe hope to see you again soon!\n\n- Team Coding Sena");
-	    mailSender.send(message);
+	    Resend resend = new Resend(resendApiKey);
+	    
+	    CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Account Unblocked")
+	    		.text("Hello " + name + ",\n\nGood news! Your account has been unblocked and you can now access all features again.\n\nWelcome back!\n\n- Team Coding Sena")
+	    		.build();
+	    
+	    try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
-	@Async
 	public void sendAccountDeactivationEmail(String to, String name) {
-		var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Account Unblocked");
-	    message.setText("Hello " + name + ",\n\nGood news! Your account has been unblocked and you can now access all features again.\n\nWelcome back!\n\n- Team Coding Sena");
-	    mailSender.send(message);
+		Resend resend = new Resend(resendApiKey);
+		
+		CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Account Deactivated")
+	    		.text("Hello " + name + ",\n\nWe regret to inform you that your account has been deactivated as per your request.\n\nIf you change your mind, you can reactivate your account anytime by contacting support.\n\n- Team Coding Sena")
+	    		.build();
+		
+		try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
-	@Async
 	public void sendAccountActivationEmail(String to, String name) {
-		var message = new SimpleMailMessage();
-	    message.setTo(to);
-	    message.setSubject("Account Unblocked");
-	    message.setText("Hello " + name + ",\n\nGood news! Your account has been activated successfully and you can now access all features again.\n\nWelcome back!\n\n- Team Coding Sena");
-	    mailSender.send(message);
+		Resend resend = new Resend(resendApiKey);
+		
+		CreateEmailOptions params = CreateEmailOptions.builder()
+	    		.from(fromEmail)
+	    		.to(to)
+	    		.subject("Account Activated")
+	    		.text("Hello " + name + ",\n\nGood news! Your account has been activated successfully and you can now access all features again.\n\nWelcome back!\n\n- Team Coding Sena")
+	    		.build();
+		
+		try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
+        }
 	}
 
 
