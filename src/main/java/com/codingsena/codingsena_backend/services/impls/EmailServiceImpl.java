@@ -1,10 +1,10 @@
 package com.codingsena.codingsena_backend.services.impls;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -38,7 +38,8 @@ public class EmailServiceImpl implements EmailService{
 		helper.setFrom(fromEmail);
 		helper.setSubject("Verify Your Email - Coding Sena");
 		
-		String template = new String(Files.readAllBytes(Paths.get("src/main/resources/verification-email.html")));
+		ClassPathResource resource = new ClassPathResource("verification-email.html");
+        String template = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 		template = template.replace("{{name}}", name);
 		template = template.replace("{{link}}", link);
 		
