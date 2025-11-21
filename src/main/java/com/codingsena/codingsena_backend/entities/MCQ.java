@@ -19,7 +19,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -43,23 +42,18 @@ public class MCQ {
 	@EqualsAndHashCode.Include
 	private Long id;
 	
-	@Lob
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String question;
 	
-	@Lob
 	@Column(nullable = false, name = "option_a", columnDefinition = "TEXT")
 	private String optionA;
 	
-	@Lob
 	@Column(nullable = false, name = "option_b", columnDefinition = "TEXT")
 	private String optionB;
 	
-	@Lob
 	@Column(nullable = false, name = "option_c", columnDefinition = "TEXT")
 	private String optionC;
 	
-	@Lob
 	@Column(nullable = false, name = "option_d", columnDefinition = "TEXT")
 	private String optionD;
 	
