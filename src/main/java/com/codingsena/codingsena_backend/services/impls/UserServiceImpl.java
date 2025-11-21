@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
 		return new ApiResponse<UserResponseDto>(true, message, userResponseDto);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public ApiResponse<Void> reSendVerificationToken(EmailRequest email) throws MessagingException, IOException {
 		User existingUser = userRepository.findByEmail(email.getEmail())
